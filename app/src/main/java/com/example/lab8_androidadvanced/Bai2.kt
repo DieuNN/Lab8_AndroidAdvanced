@@ -21,7 +21,7 @@ class Bai2 : AppCompatActivity() {
     private lateinit var binding: ActivityBai2Binding
 
     companion object {
-        lateinit var mediaPlayer: MediaPlayer
+        var mediaPlayer:MediaPlayer = MediaPlayer()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -76,7 +76,6 @@ class Bai2 : AppCompatActivity() {
     }
 
     private fun initVariables() {
-        mediaPlayer = MediaPlayer()
         binding.sbProgress.isEnabled = false
     }
 
@@ -85,40 +84,39 @@ class Bai2 : AppCompatActivity() {
         binding.lvSongList.setOnItemClickListener { _, _, index, _ ->
             val currentSong = songs[index]
 
-            // 0: Song name, 1, start time, 2, final time
+            binding.txtSongName.text = currentSong.name
 
             mediaPlayer.stop()
 
             startMusic(Uri.parse(currentSong.toString()))
 
-            val properties = getSongProperties(currentSong, mediaPlayer)
-            val songName = properties[0]
-            val startTime = properties[1]
-            val finalTime = properties[2]
-            val finalTimeInt = properties[3]
+            val properties = getTimeProperties(currentSong, mediaPlayer)
+            val startTime = properties[0]
+            val finalTime = properties[1]
+            val finalTimeInt = properties[2]
 
 
             binding.sbProgress.max = mediaPlayer.duration
 
 
-            setSongProperties(songName, startTime, finalTime, finalTimeInt.toInt())
+            setTimeProperties( startTime, finalTime, finalTimeInt.toInt())
 
-            updateSongProperties(currentSong)
+            updateTimeProperties(currentSong)
         }
     }
 
     private fun startMusic(uri: Uri) {
+        mediaPlayer.reset()
+        mediaPlayer.release()
         mediaPlayer = MediaPlayer.create(this, uri)
         mediaPlayer.start()
     }
 
-    private fun setSongProperties(
-        name: String,
+    private fun setTimeProperties(
         startTime: String,
         finalTime: String,
         startTimeInt: Int
     ) {
-        binding.txtSongName.text = name
         binding.txtSongTime.text = finalTime
         binding.txtTimePlayed.text = startTime
         binding.sbProgress.progress = startTimeInt
@@ -153,14 +151,11 @@ class Bai2 : AppCompatActivity() {
 
     }
 
-    private fun getSongProperties(file: File, mediaPlayer: MediaPlayer): ArrayList<String> {
+    private fun getTimeProperties(file: File, mediaPlayer: MediaPlayer): ArrayList<String> {
         val result = ArrayList<String>()
-        val fileName = file.name
         val startTime = mediaPlayer.currentPosition
         val finalTime = mediaPlayer.duration
 
-        // Add file name
-        result.add(fileName)
 
         // Start time
         result.add(
@@ -187,36 +182,32 @@ class Bai2 : AppCompatActivity() {
         // start time in Int type
         result.add(startTime.toString())
 
+
         return result
     }
 
 
-    private fun updateSongProperties(currentSong: File) {
-        val properties = getSongProperties(currentSong, mediaPlayer)
+    private fun updateTimeProperties(currentSong: File) {
+        val properties = getTimeProperties(currentSong, mediaPlayer)
 
-        val songName = properties[0]
-        val startTime = properties[1]
-        val finalTime = properties[2]
+        val startTime = properties[0]
+        val finalTime = properties[1]
 
 
-        setSongProperties(
-            songName,
+        setTimeProperties(
             startTime,
             finalTime,
-            getSongProperties(currentSong, mediaPlayer)[3].toInt()
+            getTimeProperties(currentSong, mediaPlayer)[2].toInt()
         )
 
         val thread = Thread() {
             runOnUiThread {
-                updateSongProperties(currentSong)
-                sleep(3000)
+                updateTimeProperties(currentSong)
+                sleep(1)
             }
         }
 
         thread.start()
-
-
-
 
     }
 
@@ -241,10 +232,12 @@ class Bai2 : AppCompatActivity() {
     private fun onStopClick() {
         binding.btnStopMusic.setOnClickListener {
             mediaPlayer.stop()
+            binding.txtSongName.text = "No song is playing"
+            binding.txtSongTime.text = "00:00"
+            binding.txtTimePlayed.text = "00:00"
+            binding.sbProgress.progress = 0
         }
     }
-
-
 }
 
 
