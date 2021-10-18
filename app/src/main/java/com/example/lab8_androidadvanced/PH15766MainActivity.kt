@@ -5,7 +5,10 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.example.lab8_androidadvanced.databinding.ActivityMainBinding
 
-class MainActivity : AppCompatActivity() {
+class PH15766MainActivity : AppCompatActivity() {
+    // Họ tên: Nông Ngọc Diệu
+    // MSSV: PH15766
+
     private lateinit var binding: ActivityMainBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -21,6 +24,4 @@ class MainActivity : AppCompatActivity() {
         }
 
     }
-
-
 }

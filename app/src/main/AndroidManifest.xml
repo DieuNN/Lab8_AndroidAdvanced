@@ -21,7 +21,7 @@
             android:name=".Bai1"
             android:exported="true" />
         <activity
-            android:name=".MainActivity"
+            android:name=".PH15766MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
